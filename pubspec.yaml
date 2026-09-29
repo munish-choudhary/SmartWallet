@@ -1,0 +1,83 @@
+name: smart_wallet
+description: Non-custodial, multi-chain crypto wallet.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.3
+
+  # State / DI
+  flutter_bloc: ^8.1.5
+
+  # Routing
+  go_router: ^14.2.0
+
+  # Wallet Core FFI bindings (local package)
+  wallet_core_ffi:
+    path: packages/wallet_core_ffi
+
+  # Encryption
+  cryptography: ^2.7.0
+  cryptography_flutter: ^2.3.2
+
+  # Secure storage
+  flutter_secure_storage: ^9.2.2
+
+  # Local DB
+  drift: ^2.19.0
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.3
+  path: ^1.9.0
+
+  # Models
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.12.0
+
+  # Network
+  dio: ^5.6.0
+  web_socket_channel: ^3.0.0
+
+  # Biometrics
+  local_auth: ^2.3.0
+
+  # WalletConnect
+  reown_walletkit: ^1.1.1
+
+  # dApp browser
+  flutter_inappwebview: ^6.0.0
+
+  # Animations
+  flutter_animate: ^4.5.0
+  rive: ^0.13.13
+
+  ffi: ^2.1.3
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  build_runner: ^2.4.11
+  freezed: ^3.0.0
+  json_serializable: ^6.8.0
+  drift_dev: ^2.19.0
+  ffigen: ^13.0.0
+
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/bip39/

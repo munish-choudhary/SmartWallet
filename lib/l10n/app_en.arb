@@ -1,0 +1,149 @@
+{
+  "@@locale": "en",
+  "appName": "Lexor Pocket",
+  "@appName": {"description": "The app's display name"},
+
+  "splashTagline": "Your Keys. Your Crypto.",
+
+  "welcomeEyebrow": "Non-Custodial • Multi-Chain",
+  "welcomeHeadline": "Your Keys.\nYour Crypto.",
+  "welcomeSubtitle": "Buy, store, swap, and manage your digital assets with institutional-grade security and zero compromise.",
+  "welcomeGetStarted": "Get Started",
+  "welcomeTerms": "By continuing, you agree to Lexor Pocket's Terms of Service and Privacy Notice.",
+
+  "setupChoiceTitle": "Wallet Setup",
+  "setupChoiceHeadline": "Get Started with Lexor Pocket",
+  "setupChoiceSubtitle": "Choose how you'd like to set up your wallet",
+  "setupChoiceCreateTitle": "Create New Wallet",
+  "setupChoiceCreateBody": "Generate a fresh multi-chain vault with a 12- or 24-word recovery phrase.",
+  "setupChoiceCreateBadge": "Recommended",
+  "setupChoiceImportTitle": "Import Existing Wallet",
+  "setupChoiceImportBody": "Restore your funds using a secret recovery phrase or private key.",
+  "setupChoiceFooter": "Non-custodial. Your keys are encrypted on this device.",
+
+  "pinCreateTitle": "Create Passcode",
+  "pinCreateSubtitle": "Set a 6-digit passcode to unlock your vault and authorize transactions.",
+  "pinConfirmTitle": "Confirm Passcode",
+  "pinConfirmSubtitle": "Re-enter your 6-digit passcode to verify.",
+  "pinDigitsEntered": "{count} of {total} digits entered",
+  "@pinDigitsEntered": {
+    "placeholders": {"count": {"type": "int"}, "total": {"type": "int"}}
+  },
+  "pinTrivialError": "That passcode is too easy to guess. Avoid repeated or sequential digits.",
+  "pinMismatchError": "Passcodes don't match. Try again.",
+  "pinMismatchTooMany": "Too many mismatches — let's start over.",
+  "pinNeverShare": "Never share your passcode with anyone.",
+
+  "biometricsTitle": "Enable Quick Unlock",
+  "biometricsSubtitle": "Use Face ID or fingerprint to unlock your vault faster. You can change this later in Settings.",
+  "biometricsEnable": "Enable Biometrics",
+  "biometricsSkip": "Skip for now",
+
+  "backupWarningTitle": "Back Up Your Wallet",
+  "backupWarningBody": "In the next step you'll see your {count}-word Secret Recovery Phrase. It's the only way to recover your funds if you lose access.",
+  "@backupWarningBody": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "backupWarningItem1Title": "Never share your phrase",
+  "backupWarningItem1Body": "Anyone with your recovery phrase can steal all your funds instantly. We will never ask for it.",
+  "backupWarningItem2Title": "Store it safely offline",
+  "backupWarningItem2Body": "Write it down on paper. Do not take screenshots or store it in cloud backups.",
+  "backupWarningItem3Title": "We cannot recover it",
+  "backupWarningItem3Body": "Lexor Pocket is non-custodial. If you lose this phrase, your assets are unrecoverable.",
+  "backupWarningContinue": "Continue to Phrase",
+
+  "recoveryPhraseTitle": "Recovery Phrase",
+  "recoveryPhraseHeadline": "Your Recovery Phrase",
+  "recoveryPhraseSubtitle": "Write down these {count} words in order. Never share them with anyone.",
+  "@recoveryPhraseSubtitle": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "recoveryPhraseHide": "Hide Words",
+  "recoveryPhraseReveal": "Reveal Words",
+  "recoveryPhraseScreenWarning": "Make sure no one is watching your screen",
+  "recoveryPhraseCopy": "Copy to Clipboard",
+  "recoveryPhraseCopiedSnackbar": "Copied — clipboard will clear automatically in 60 seconds",
+  "recoveryPhraseScreenshotWarningTitle": "Do not take screenshots",
+  "recoveryPhraseScreenshotWarningBody": "Digital photos and cloud uploads are vulnerable to remote extraction.",
+  "recoveryPhraseSaved": "I've Saved My Phrase",
+  "recoveryPhraseLeaveDialogTitle": "Leave without saving?",
+  "recoveryPhraseLeaveDialogBody": "Leaving now will discard this wallet. You'll need to start over.",
+  "recoveryPhraseLeaveDialogConfirm": "Discard",
+  "recoveryPhraseLeaveDialogCancel": "Stay",
+
+  "verifyPhraseTitle": "Verify Phrase",
+  "verifyPhraseHeadline": "Verify Recovery Phrase",
+  "verifyPhraseSubtitle": "Tap the words that belong at each position.",
+  "verifyPhraseWordPrompt": "Select word #{index}",
+  "@verifyPhraseWordPrompt": {
+    "placeholders": {"index": {"type": "int"}}
+  },
+  "verifyPhraseProgress": "{done} of {total} verified",
+  "@verifyPhraseProgress": {
+    "placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}
+  },
+  "verifyPhraseConfirm": "Confirm & Complete",
+  "verifyPhraseShowAgain": "Need to see the words again?",
+  "verifyPhraseWrongWord": "That's not the right word — try again.",
+
+  "creationSuccessTitle": "Wallet Created!",
+  "creationSuccessSubtitle": "Your self-custodial vault is encrypted and ready to use.",
+  "creationSuccessGoToWallet": "Go to Wallet",
+
+  "importMethodTitle": "Choose Import Method",
+  "importMethodSubtitle": "Restore your wallet from an existing seed phrase or a raw private key.",
+  "importMethodPhraseTab": "Secret Phrase",
+  "importMethodKeyTab": "Private Key",
+  "importMethodContinuePhrase": "Continue with Phrase",
+  "importMethodContinueKey": "Continue with Key",
+  "importMethodPhraseCardTitle": "Secret Recovery Phrase",
+  "importMethodPhraseCardBody": "12 or 24 mnemonic words (BIP-39 standard).",
+  "importMethodKeyCardTitle": "Raw Private Key",
+  "importMethodKeyCardBody": "64-character hexadecimal key for a single account.",
+
+  "importPhraseTitle": "Enter Recovery Phrase",
+  "importPhraseSubtitle": "Type or paste your mnemonic seed in exact order.",
+  "importPhrase12Words": "12 Words",
+  "importPhrase24Words": "24 Words",
+  "importPhrasePasteAll": "Paste All",
+  "importPhraseClear": "Clear phrase",
+  "importPhraseWordsValid": "{valid} / {total} words valid",
+  "@importPhraseWordsValid": {
+    "placeholders": {"valid": {"type": "int"}, "total": {"type": "int"}}
+  },
+  "importPhraseChecksumValid": "Checksum verified",
+  "importPhraseChecksumValidBody": "Valid BIP-39 mnemonic pattern confirmed.",
+  "importPhraseInvalidWord": "Not a valid recovery word",
+  "importWallet": "Import Wallet",
+
+  "importKeyTitle": "Enter Private Key",
+  "importKeySubtitle": "Input your raw private key to import this account.",
+  "importKeyNetwork": "Target Network",
+  "importKeyHexLabel": "Hex Key (256-bit)",
+  "importKeyShow": "Show",
+  "importKeyHide": "Hide",
+  "importKeyFormatValid": "Format valid",
+  "importKeyPaste": "Paste Clipboard",
+  "importKeyScanQr": "Scan QR Code",
+  "importKeyScanQrComingSoon": "QR scanning coming soon",
+  "importKeyWarningTitle": "Security Warning",
+  "importKeyWarningBody": "Never paste private keys on untrusted devices. Private keys grant full control over linked funds.",
+  "networkEthereum": "Ethereum Mainnet (EVM)",
+  "networkSmartChain": "BNB Chain (EVM)",
+  "networkPolygon": "Polygon (EVM)",
+  "networkArbitrum": "Arbitrum (EVM)",
+  "networkBase": "Base (EVM)",
+  "networkSolana": "Solana",
+  "networkTron": "Tron",
+  "networkBitcoin": "Bitcoin",
+
+  "importingTitle": "Importing Vault",
+  "importingBody": "Encrypting and setting up your wallet…",
+
+  "importSuccessTitle": "Wallet Imported!",
+  "importSuccessSubtitle": "Your wallet has been restored and encrypted on this device.",
+
+  "commonBack": "Back",
+  "commonCancel": "Cancel",
+  "commonGenericError": "Something went wrong. Please try again."
+}

@@ -1,0 +1,61 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_inappwebview_ios (0.0.1):
+    - Flutter
+    - flutter_inappwebview_ios/Core (= 0.0.1)
+    - OrderedSet (~> 6.0.3)
+  - flutter_inappwebview_ios/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 6.0.3)
+  - flutter_secure_storage (6.0.0):
+    - Flutter
+  - OrderedSet (6.0.3)
+  - rive_common (0.0.1):
+    - Flutter
+  - wallet_core_ffi (0.0.1):
+    - Flutter
+  - walletconnect_pay (0.0.1):
+    - Flutter
+    - YttriumWrapper (= 0.10.59)
+  - YttriumWrapper (0.10.59)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - rive_common (from `.symlinks/plugins/rive_common/ios`)
+  - wallet_core_ffi (from `.symlinks/plugins/wallet_core_ffi/ios`)
+  - walletconnect_pay (from `.symlinks/plugins/walletconnect_pay/ios`)
+
+SPEC REPOS:
+  trunk:
+    - OrderedSet
+    - YttriumWrapper
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_inappwebview_ios:
+    :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  rive_common:
+    :path: ".symlinks/plugins/rive_common/ios"
+  wallet_core_ffi:
+    :path: ".symlinks/plugins/wallet_core_ffi/ios"
+  walletconnect_pay:
+    :path: ".symlinks/plugins/walletconnect_pay/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
+  flutter_inappwebview_ios: b89ba3482b96fb25e00c967aae065701b66e9b99
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
+  rive_common: dd421daaf9ae69f0125aa761dd96abd278399952
+  wallet_core_ffi: 18bd899d0f9480e9b0c6c812ea9b9c9a86b62431
+  walletconnect_pay: f32ca9b9f5c9e29583072b082a6ef7b5d4e12288
+  YttriumWrapper: 64983f0edbf609b800ac3074010224fc5341aaeb
+
+PODFILE CHECKSUM: 3ba3a73b1b12adcf321a227a745625fe0888cc82
+
+COCOAPODS: 1.17.0
