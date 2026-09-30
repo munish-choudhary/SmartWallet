@@ -37,6 +37,7 @@ final class FakeVault implements Vault {
 
   final Map<WalletId, _FakeWalletRecord> _wallets = {};
   final _statusController = StreamController<VaultStatus>.broadcast();
+  WalletId? _activeId;
   bool _unlocked = false;
   bool _biometricsEnabled = false;
   Uint8List? _pinHash;
@@ -53,6 +54,29 @@ final class FakeVault implements Vault {
 
   @override
   Future<bool> hasAnyWallet() async => _wallets.isNotEmpty;
+
+  @override
+  Future<Result<WalletId>> activeWalletId() async {
+    if (_wallets.isEmpty) return const Result.err(AppFailure.walletNotFound());
+    final chosen = _activeId;
+    return Result.ok(
+      chosen != null && _wallets.containsKey(chosen)
+          ? chosen
+          : _wallets.keys.first,
+    );
+  }
+
+  @override
+  Future<List<WalletId>> walletIds() async => _wallets.keys.toList();
+
+  @override
+  Future<Result<void>> setActiveWallet(WalletId id) async {
+    if (!_wallets.containsKey(id)) {
+      return const Result.err(AppFailure.walletNotFound());
+    }
+    _activeId = id;
+    return const Result.ok(null);
+  }
 
   @override
   Stream<VaultStatus> get status => _statusController.stream;
@@ -308,6 +332,22 @@ final class FakeVault implements Vault {
         ? Uint8List.fromList(utf8.encode(wallet.mnemonic!))
         : wallet.key!;
     return Result.ok(SecretReveal(type: wallet.type, secret: secret));
+  }
+
+  @override
+  Future<Result<Uint8List>> exportPrivateKey(
+    WalletId id, {
+    required CoinType coin,
+    required Pin pin,
+  }) async {
+    if (!await _pinMatches(pin)) return const Result.err(AppFailure.wrongPin());
+    final wallet = _wallets[id];
+    if (wallet == null) return const Result.err(AppFailure.walletNotFound());
+    if (wallet.key != null) return Result.ok(Uint8List.fromList(wallet.key!));
+    final seed = '${wallet.mnemonic}/${coin.name}'.codeUnits;
+    return Result.ok(
+      Uint8List.fromList([for (var i = 0; i < 32; i++) seed[i % seed.length] ^ i]),
+    );
   }
 
   @override

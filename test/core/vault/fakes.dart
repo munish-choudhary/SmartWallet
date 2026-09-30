@@ -74,6 +74,18 @@ final class InMemoryEnvelopeStore implements EnvelopeStore {
   Future<void> removeWalletId(String walletId) async =>
       _walletIds.remove(walletId);
 
+  String? _activeWalletId;
+
+  @override
+  Future<String?> readActiveWalletId() async => _activeWalletId;
+
+  @override
+  Future<void> writeActiveWalletId(String walletId) async =>
+      _activeWalletId = walletId;
+
+  @override
+  Future<void> deleteActiveWalletId() async => _activeWalletId = null;
+
   @override
   Future<void> writeBiometricPin(Uint8List wrapped) async =>
       _biometricPin = wrapped;
@@ -155,6 +167,10 @@ final class FakeWalletCoreGateway implements WalletCoreGateway {
     }
     return '0x${coin.name}:imported:${keyBytes.first}';
   }
+
+  @override
+  Uint8List privateKeyForCoin(String mnemonic, wc.CoinType coin) =>
+      Uint8List.fromList(List<int>.filled(32, coin.index + 1));
 
   @override
   Uint8List sign({

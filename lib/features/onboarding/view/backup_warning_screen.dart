@@ -1,3 +1,6 @@
+import 'dart:async' show unawaited;
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +12,8 @@ import '../../../core/design_system/checkbox_list_item.dart';
 import '../../../core/design_system/icon_badge.dart';
 import '../../../core/design_system/onboarding_scaffold.dart';
 import '../../../core/design_system/pill_button.dart';
+import '../../../core/result/result.dart';
+import '../../../core/vault/vault.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../view_model/onboarding_flow_cubit.dart';
 
@@ -23,6 +28,17 @@ class _BackupWarningScreenState extends State<BackupWarningScreen> {
   final _checked = [false, false, false];
 
   bool get _allChecked => _checked.every((c) => c);
+
+  /// Generates the pending mnemonic (held in the vault, never in state)
+  /// that the recovery-phrase and verify screens read from.
+  Future<void> _continue() async {
+    final wordCount = context.read<OnboardingFlowCubit>().state.wordCount;
+    final started = await context.read<Vault>().startPendingWallet(
+      words: wordCount,
+    );
+    if (!mounted) return;
+    if (started.isOk) unawaited(context.push(Routes.recoveryPhrase));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +92,7 @@ class _BackupWarningScreenState extends State<BackupWarningScreen> {
       footer: PillButton(
         label: l10n.backupWarningContinue,
         icon: Icons.arrow_forward,
-        onPressed: _allChecked
-            ? () => context.push(Routes.recoveryPhrase)
-            : null,
+        onPressed: _allChecked ? () => unawaited(_continue()) : null,
       ),
     );
   }

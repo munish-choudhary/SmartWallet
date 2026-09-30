@@ -31,6 +31,10 @@
   },
   "pinTrivialError": "That passcode is too easy to guess. Avoid repeated or sequential digits.",
   "pinMismatchError": "Passcodes don't match. Try again.",
+  "pinVerifyTitle": "Enter Passcode",
+  "pinVerifySubtitle": "Enter your current passcode to add another wallet.",
+  "pinWrongError": "Incorrect passcode. Try again.",
+  "pinLockedOutError": "Too many attempts. Try again later.",
   "pinMismatchTooMany": "Too many mismatches — let's start over.",
   "pinNeverShare": "Never share your passcode with anyone.",
 
@@ -53,6 +57,8 @@
   "backupWarningContinue": "Continue to Phrase",
 
   "recoveryPhraseTitle": "Recovery Phrase",
+  "recoveryPhraseStepPill": "Step 2 of 3",
+  "recoveryPhrasePrivacyLabel": "Private view active",
   "recoveryPhraseHeadline": "Your Recovery Phrase",
   "recoveryPhraseSubtitle": "Write down these {count} words in order. Never share them with anyone.",
   "@recoveryPhraseSubtitle": {
@@ -72,6 +78,7 @@
   "recoveryPhraseLeaveDialogCancel": "Stay",
 
   "verifyPhraseTitle": "Verify Phrase",
+  "verifyPhraseStepLabel": "Verify",
   "verifyPhraseHeadline": "Verify Recovery Phrase",
   "verifyPhraseSubtitle": "Tap the words that belong at each position.",
   "verifyPhraseWordPrompt": "Select word #{index}",

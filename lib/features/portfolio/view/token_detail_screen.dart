@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../../app/routes.dart';
 import '../data/models/token_asset.dart';
 import '../data/models/transaction_record.dart';
 import 'widgets/interactive_sparkline_chart.dart';
@@ -186,11 +189,7 @@ class _TokenDetailScreenState extends State<TokenDetailScreen> {
                   ),
                 ),
                 child: const Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 18,
-                    color: Color(0xFF131317),
-                  ),
+                  child: Icon(Icons.person, size: 18, color: Color(0xFF131317)),
                 ),
               ),
             ],
@@ -651,11 +650,7 @@ class _TokenDetailScreenState extends State<TokenDetailScreen> {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Icon(
-                  icon,
-                  size: 16,
-                  color: const Color(0xFFE4E1E7),
-                ),
+                child: Icon(icon, size: 16, color: const Color(0xFFE4E1E7)),
               ),
             ),
             const SizedBox(height: 4),
@@ -875,14 +870,14 @@ class _TokenDetailScreenState extends State<TokenDetailScreen> {
                       tx.isInbound
                           ? Icons.arrow_downward_rounded
                           : (tx.isOutbound
-                              ? Icons.arrow_outward_rounded
-                              : Icons.sync_alt_rounded),
+                                ? Icons.arrow_outward_rounded
+                                : Icons.sync_alt_rounded),
                       size: 16,
                       color: tx.isInbound
                           ? const Color(0xFFD4EE6B)
                           : (tx.isOutbound
-                              ? const Color(0xFFFFB4AB)
-                              : const Color(0xFFE4E1E7)),
+                                ? const Color(0xFFFFB4AB)
+                                : const Color(0xFFE4E1E7)),
                     ),
                   ),
                 ),
@@ -1002,70 +997,73 @@ class _TokenDetailScreenState extends State<TokenDetailScreen> {
 
   Widget _buildFloatingAiButton(TokenAsset asset) {
     return RepaintBoundary(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(42, 41, 46, 0.9),
-              borderRadius: BorderRadius.circular(9999),
-              border: Border.all(
-                color: const Color(0xFFD4EE6B).withValues(alpha: 0.2),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 12,
-                  color: Color(0xFFD4EE6B),
+      child: GestureDetector(
+        onTap: () => context.push(Routes.aiAssistantPath(token: asset.symbol)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(42, 41, 46, 0.9),
+                borderRadius: BorderRadius.circular(9999),
+                border: Border.all(
+                  color: const Color(0xFFD4EE6B).withValues(alpha: 0.2),
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  'Ask AI about ${asset.symbol}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.07,
-                    color: Color.fromRGBO(255, 255, 255, 0.9),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 12,
+                    color: Color(0xFFD4EE6B),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF5B3E8C),
-                  Color(0xFF7B4BA6),
-                  Color(0xFFC8733A),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Ask AI about ${asset.symbol}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.07,
+                      color: Color.fromRGBO(255, 255, 255, 0.9),
+                    ),
+                  ),
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(228, 255, 122, 0.4),
-                  blurRadius: 16,
+            ),
+            const SizedBox(width: 8),
+            Container(
+              width: 52,
+              height: 52,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF5B3E8C),
+                    Color(0xFF7B4BA6),
+                    Color(0xFFC8733A),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.smart_toy_rounded,
-                size: 22,
-                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(228, 255, 122, 0.4),
+                    blurRadius: 16,
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.smart_toy_rounded,
+                  size: 22,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1084,13 +1082,7 @@ class _TokenDetailScreenState extends State<TokenDetailScreen> {
         child: SizedBox(
           width: 40,
           height: 40,
-          child: Center(
-            child: Icon(
-              icon,
-              size: 20,
-              color: iconColor,
-            ),
-          ),
+          child: Center(child: Icon(icon, size: 20, color: iconColor)),
         ),
       ),
     );

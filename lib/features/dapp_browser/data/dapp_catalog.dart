@@ -1,0 +1,103 @@
+import 'models/dapp.dart';
+
+/// Curated discovery list. Every URL here is the project's canonical site.
+abstract final class DappCatalog {
+  static const featured = <Dapp>[
+    Dapp(
+      id: 'uniswap',
+      name: 'Uniswap',
+      url: 'https://app.uniswap.org',
+      description: 'Swap tokens on the leading decentralized exchange.',
+      category: DappCategory.defi,
+      brandColor: 0xFFFF007A,
+    ),
+    Dapp(
+      id: 'aave',
+      name: 'Aave',
+      url: 'https://app.aave.com',
+      description: 'Lend and borrow with a non-custodial liquidity protocol.',
+      category: DappCategory.defi,
+      brandColor: 0xFFB6509E,
+    ),
+    Dapp(
+      id: 'lido',
+      name: 'Lido',
+      url: 'https://stake.lido.fi',
+      description: 'Stake ETH and keep it liquid.',
+      category: DappCategory.defi,
+      brandColor: 0xFF00A3FF,
+    ),
+    Dapp(
+      id: 'curve',
+      name: 'Curve',
+      url: 'https://curve.fi',
+      description: 'Low-slippage stablecoin trading and pools.',
+      category: DappCategory.defi,
+      brandColor: 0xFF3466AA,
+    ),
+    Dapp(
+      id: 'pancakeswap',
+      name: 'PancakeSwap',
+      url: 'https://pancakeswap.finance',
+      description: 'Trade and earn on BNB Chain.',
+      category: DappCategory.defi,
+      brandColor: 0xFF1FC7D4,
+    ),
+    Dapp(
+      id: 'opensea',
+      name: 'OpenSea',
+      url: 'https://opensea.io',
+      description: 'Discover, buy and sell NFTs.',
+      category: DappCategory.nft,
+      brandColor: 0xFF2081E2,
+    ),
+    Dapp(
+      id: 'blur',
+      name: 'Blur',
+      url: 'https://blur.io',
+      description: 'The NFT marketplace for pro traders.',
+      category: DappCategory.nft,
+      brandColor: 0xFFFF8700,
+    ),
+    Dapp(
+      id: 'axie',
+      name: 'Axie Infinity',
+      url: 'https://app.axieinfinity.com',
+      description: 'Collect, battle and trade Axies.',
+      category: DappCategory.games,
+      brandColor: 0xFF0055D5,
+    ),
+    Dapp(
+      id: 'stargate',
+      name: 'Stargate',
+      url: 'https://stargate.finance',
+      description: 'Move assets across chains.',
+      category: DappCategory.bridge,
+      brandColor: 0xFF8A8D91,
+    ),
+    Dapp(
+      id: 'across',
+      name: 'Across',
+      url: 'https://app.across.to',
+      description: 'Fast, low-cost cross-chain bridging.',
+      category: DappCategory.bridge,
+      brandColor: 0xFF6CF9D8,
+    ),
+    Dapp(
+      id: 'etherscan',
+      name: 'Etherscan',
+      url: 'https://etherscan.io',
+      description: 'Explore transactions, tokens and contracts.',
+      category: DappCategory.tools,
+      brandColor: 0xFF3498DB,
+    ),
+    Dapp(
+      id: 'revoke',
+      name: 'Revoke.cash',
+      url: 'https://revoke.cash',
+      description: 'Review and revoke token approvals.',
+      category: DappCategory.tools,
+      brandColor: 0xFF00C2A8,
+    ),
+  ];
+}

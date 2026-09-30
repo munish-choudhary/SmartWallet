@@ -88,6 +88,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinMismatchError => 'Passcodes don\'t match. Try again.';
 
   @override
+  String get pinVerifyTitle => 'Enter Passcode';
+
+  @override
+  String get pinVerifySubtitle =>
+      'Enter your current passcode to add another wallet.';
+
+  @override
+  String get pinWrongError => 'Incorrect passcode. Try again.';
+
+  @override
+  String get pinLockedOutError => 'Too many attempts. Try again later.';
+
+  @override
   String get pinMismatchTooMany => 'Too many mismatches — let\'s start over.';
 
   @override
@@ -142,6 +155,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recoveryPhraseTitle => 'Recovery Phrase';
 
   @override
+  String get recoveryPhraseStepPill => 'Step 2 of 3';
+
+  @override
+  String get recoveryPhrasePrivacyLabel => 'Private view active';
+
+  @override
   String get recoveryPhraseHeadline => 'Your Recovery Phrase';
 
   @override
@@ -191,6 +210,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifyPhraseTitle => 'Verify Phrase';
+
+  @override
+  String get verifyPhraseStepLabel => 'Verify';
 
   @override
   String get verifyPhraseHeadline => 'Verify Recovery Phrase';

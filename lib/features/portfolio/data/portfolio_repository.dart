@@ -10,16 +10,14 @@ abstract interface class PortfolioRepository {
   Stream<Result<PortfolioSnapshot>> watchSnapshot();
   Future<Result<PortfolioSnapshot>> refresh();
   Future<Result<void>> toggleFavorite(String tokenId);
+  Future<Result<void>> toggleHidden(String tokenId);
+  Future<Result<void>> addCustomToken(TokenAsset token);
 }
 
 class InMemoryPortfolioRepository implements PortfolioRepository {
   InMemoryPortfolioRepository({PortfolioSnapshot? initialSnapshot}) {
     _currentSnapshot = initialSnapshot ?? _defaultSeedSnapshot;
-    _controller = StreamController<Result<PortfolioSnapshot>>.broadcast(
-      onListen: () {
-        _controller.add(Result.ok(_currentSnapshot));
-      },
-    );
+    _controller = StreamController<Result<PortfolioSnapshot>>.broadcast();
   }
 
   late PortfolioSnapshot _currentSnapshot;
@@ -31,8 +29,12 @@ class InMemoryPortfolioRepository implements PortfolioRepository {
   }
 
   @override
-  Stream<Result<PortfolioSnapshot>> watchSnapshot() {
-    return _controller.stream;
+  Stream<Result<PortfolioSnapshot>> watchSnapshot() async* {
+    // Every listener gets the current value first. A broadcast controller's
+    // onListen only fires for the first listener, which left later screens
+    // (e.g. Manage Token List) stuck on their loader.
+    yield Result.ok(_currentSnapshot);
+    yield* _controller.stream;
   }
 
   @override
@@ -53,6 +55,35 @@ class InMemoryPortfolioRepository implements PortfolioRepository {
     }).toList();
 
     _currentSnapshot = _currentSnapshot.copyWith(assets: updatedAssets);
+    _controller.add(Result.ok(_currentSnapshot));
+    return const Result.ok(null);
+  }
+
+  @override
+  Future<Result<void>> toggleHidden(String tokenId) async {
+    _currentSnapshot = _currentSnapshot.copyWith(
+      assets: [
+        for (final asset in _currentSnapshot.assets)
+          asset.id == tokenId
+              ? asset.copyWith(isHidden: !asset.isHidden)
+              : asset,
+      ],
+    );
+    _controller.add(Result.ok(_currentSnapshot));
+    return const Result.ok(null);
+  }
+
+  @override
+  Future<Result<void>> addCustomToken(TokenAsset token) async {
+    final exists = _currentSnapshot.assets.any(
+      (a) =>
+          a.network == token.network &&
+          a.contractAddress.toLowerCase() == token.contractAddress.toLowerCase(),
+    );
+    if (exists) return const Result.err(AppFailure.unknown('Token already added'));
+    _currentSnapshot = _currentSnapshot.copyWith(
+      assets: [..._currentSnapshot.assets, token],
+    );
     _controller.add(Result.ok(_currentSnapshot));
     return const Result.ok(null);
   }

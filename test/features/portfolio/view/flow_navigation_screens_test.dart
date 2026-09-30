@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_wallet/core/result/result.dart';
+import 'package:smart_wallet/features/notifications/data/notifications_repository.dart';
+import 'package:smart_wallet/features/notifications/view_model/notifications_cubit.dart';
 import 'package:smart_wallet/features/portfolio/data/portfolio_repository.dart';
 import 'package:smart_wallet/features/portfolio/view/activity_history_screen.dart';
 import 'package:smart_wallet/features/portfolio/view/portfolio_screen.dart';
@@ -33,8 +35,15 @@ void main() {
       return MaterialApp(
         home: RepositoryProvider<PortfolioRepository>.value(
           value: repository,
-          child: BlocProvider(
-            create: (_) => PortfolioCubit(repository: repository),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => PortfolioCubit(repository: repository)),
+              BlocProvider(
+                create: (_) => NotificationsCubit(
+                  repository: InMemoryNotificationsRepository(),
+                ),
+              ),
+            ],
             child: const PortfolioScreen(),
           ),
         ),

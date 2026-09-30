@@ -23,6 +23,11 @@ abstract interface class EnvelopeStore {
   Future<void> addWalletId(String walletId);
   Future<void> removeWalletId(String walletId);
 
+  /// Which wallet the app operates on (a wallet id — not secret).
+  Future<String?> readActiveWalletId();
+  Future<void> writeActiveWalletId(String walletId);
+  Future<void> deleteActiveWalletId();
+
   /// The biometric-wrapped PIN blob (see CLAUDE.md's Biometrics section).
   /// One per vault, not per wallet — the PIN unlocks every wallet in the
   /// vault.
@@ -45,6 +50,7 @@ final class SecureEnvelopeStore implements EnvelopeStore {
 
   static const _walletIdsKey = 'vault.walletIds';
   static const _biometricPinKey = 'vault.biometricPin';
+  static const _activeWalletIdKey = 'vault.activeWalletId';
   String _envelopeKey(String walletId) => 'vault.envelope.$walletId';
   String _metaKey(String walletId) => 'vault.meta.$walletId';
 
@@ -84,6 +90,18 @@ final class SecureEnvelopeStore implements EnvelopeStore {
     final ids = (await listWalletIds())..remove(walletId);
     await _storage.write(key: _walletIdsKey, value: jsonEncode(ids));
   }
+
+  @override
+  Future<String?> readActiveWalletId() =>
+      _storage.read(key: _activeWalletIdKey);
+
+  @override
+  Future<void> writeActiveWalletId(String walletId) =>
+      _storage.write(key: _activeWalletIdKey, value: walletId);
+
+  @override
+  Future<void> deleteActiveWalletId() =>
+      _storage.delete(key: _activeWalletIdKey);
 
   @override
   Future<void> writeMeta(String walletId, Map<String, Object?> meta) =>

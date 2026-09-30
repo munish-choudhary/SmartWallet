@@ -21,6 +21,7 @@ sealed class TokenAsset with _$TokenAsset {
     required List<double> sparklinePoints,
     @Default(0.0) double stakedBalance,
     @Default(false) bool isFavorite,
+    @Default(false) bool isHidden,
   }) = _TokenAsset;
 
   double get fiatValue => balance * priceUsd;

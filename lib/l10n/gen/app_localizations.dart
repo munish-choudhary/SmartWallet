@@ -232,6 +232,30 @@ abstract class AppLocalizations {
   /// **'Passcodes don\'t match. Try again.'**
   String get pinMismatchError;
 
+  /// No description provided for @pinVerifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Passcode'**
+  String get pinVerifyTitle;
+
+  /// No description provided for @pinVerifySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current passcode to add another wallet.'**
+  String get pinVerifySubtitle;
+
+  /// No description provided for @pinWrongError.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect passcode. Try again.'**
+  String get pinWrongError;
+
+  /// No description provided for @pinLockedOutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Try again later.'**
+  String get pinLockedOutError;
+
   /// No description provided for @pinMismatchTooMany.
   ///
   /// In en, this message translates to:
@@ -328,6 +352,18 @@ abstract class AppLocalizations {
   /// **'Recovery Phrase'**
   String get recoveryPhraseTitle;
 
+  /// No description provided for @recoveryPhraseStepPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3'**
+  String get recoveryPhraseStepPill;
+
+  /// No description provided for @recoveryPhrasePrivacyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Private view active'**
+  String get recoveryPhrasePrivacyLabel;
+
   /// No description provided for @recoveryPhraseHeadline.
   ///
   /// In en, this message translates to:
@@ -417,6 +453,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verify Phrase'**
   String get verifyPhraseTitle;
+
+  /// No description provided for @verifyPhraseStepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verifyPhraseStepLabel;
 
   /// No description provided for @verifyPhraseHeadline.
   ///

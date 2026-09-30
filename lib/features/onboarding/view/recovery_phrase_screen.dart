@@ -6,14 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_spacing.dart';
-import '../../../app/theme/app_typography.dart';
-import '../../../core/design_system/glass_card.dart';
-import '../../../core/design_system/onboarding_scaffold.dart';
-import '../../../core/design_system/pill_button.dart';
-import '../../../core/design_system/warning_card.dart';
-import '../../../core/design_system/word_chip.dart';
+import '../../../core/design_system/lexor_page_scaffold.dart';
+import '../../../core/design_system/lexor_palette.dart';
+import '../../../core/design_system/lexor_primary_button.dart';
 import '../../../core/result/result.dart';
 import '../../../core/security/screen_protection_mixin.dart';
 import '../../../core/vault/vault.dart';
@@ -92,12 +87,25 @@ class RecoveryPhraseScreenState extends State<RecoveryPhraseScreen>
         if (didPop) return;
         await _handleBack();
       },
-      child: OnboardingScaffold(
+      child: LexorPageScaffold(
+        title: l10n.recoveryPhraseTitle,
         onBack: _handleBack,
-        currentStep: 2,
-        totalSteps: 3,
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
+        scrollable: true,
+        bottom: words == null
+            ? null
+            : Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                child: LexorPrimaryButton(
+                  label: l10n.recoveryPhraseSaved,
+                  icon: Icons.arrow_forward,
+                  onPressed: () => context.push(Routes.verifyPhrase),
+                ),
+              ),
+        child: _loading
+            ? const Padding(
+                padding: EdgeInsets.only(top: 96),
+                child: Center(child: CircularProgressIndicator()),
+              )
             : words == null
             ? Center(child: Text(l10n.recoveryPhraseTitle))
             : _PhraseBody(
@@ -105,13 +113,6 @@ class RecoveryPhraseScreenState extends State<RecoveryPhraseScreen>
                 revealed: _revealed,
                 onToggleReveal: () => setState(() => _revealed = !_revealed),
                 onCopy: () => _copyToClipboard(words),
-              ),
-        footer: words == null
-            ? null
-            : PillButton(
-                label: l10n.recoveryPhraseSaved,
-                icon: Icons.arrow_forward,
-                onPressed: () => context.push(Routes.verifyPhrase),
               ),
       ),
     );
@@ -137,69 +138,377 @@ class _PhraseBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _StepTracker(label: l10n.recoveryPhraseStepPill),
+        const SizedBox(height: 24),
         Text(
           l10n.recoveryPhraseHeadline,
-          textAlign: TextAlign.center,
-          style: AppTypography.headline,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          l10n.recoveryPhraseSubtitle(words.length),
-          textAlign: TextAlign.center,
-          style: AppTypography.body,
-        ),
-        const SizedBox(height: AppSpacing.xl),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            onPressed: onToggleReveal,
-            icon: Icon(
-              revealed ? Icons.visibility_off : Icons.visibility,
-              size: 18,
-              color: AppColors.accent,
-            ),
-            label: Text(
-              revealed ? l10n.recoveryPhraseHide : l10n.recoveryPhraseReveal,
-              style: AppTypography.bodyStrong.copyWith(
-                color: AppColors.accent,
-              ),
-            ),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.6,
+            height: 32 / 24,
           ),
         ),
-        GlassCard(
+        const SizedBox(height: 4),
+        Text(
+          l10n.recoveryPhraseSubtitle(words.length),
+          style: const TextStyle(
+            color: Color(0xFFC6C6C7),
+            fontSize: 14,
+            height: 20 / 14,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(27, 27, 31, 0.7),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(14, 14, 18, 0.8),
+                blurRadius: 25,
+                offset: Offset(0, 20),
+                spreadRadius: -5,
+              ),
+            ],
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
+              Row(
                 children: [
-                  for (var i = 0; i < words.length; i++)
-                    FractionallySizedBox(
-                      widthFactor: 0.46,
-                      child: WordChip(
-                        word: words[i],
-                        index: i + 1,
-                        blurred: !revealed,
+                  const Icon(
+                    Icons.lock_outline_rounded,
+                    size: 14,
+                    color: LexorPalette.accent,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      l10n.recoveryPhrasePrivacyLabel.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: LexorPalette.textPrimary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.6,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  _PillAction(
+                    icon: revealed
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    label: revealed
+                        ? l10n.recoveryPhraseHide
+                        : l10n.recoveryPhraseReveal,
+                    accentIcon: true,
+                    onTap: onToggleReveal,
+                  ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(31, 31, 35, 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.visibility_outlined,
+                      size: 14,
+                      color: Color(0xFFC6C6C7),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.recoveryPhraseScreenWarning,
+                        style: const TextStyle(
+                          color: Color(0xFFC6C6C7),
+                          fontSize: 12,
+                          height: 16 / 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              for (var i = 0; i < words.length; i += 2) ...[
+                if (i > 0) const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _WordTile(
+                        index: i + 1,
+                        word: words[i],
+                        hidden: !revealed,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: i + 1 < words.length
+                          ? _WordTile(
+                              index: i + 2,
+                              word: words[i + 1],
+                              hidden: !revealed,
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Opacity(
+          opacity: revealed ? 1 : 0.5,
+          child: _PillAction(
+            icon: Icons.copy_outlined,
+            label: l10n.recoveryPhraseCopy,
+            expanded: true,
+            onTap: revealed ? onCopy : null,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: LexorPalette.sheet,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF353439),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.no_photography_outlined,
+                  size: 16,
+                  color: LexorPalette.danger,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.recoveryPhraseScreenshotWarningTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        height: 16 / 12,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.recoveryPhraseScreenshotWarningBody,
+                      style: const TextStyle(
+                        color: Color(0xFFC6C6C7),
+                        fontSize: 12,
+                        height: 16 / 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        PillButton(
-          label: l10n.recoveryPhraseCopy,
-          variant: PillButtonVariant.secondary,
-          icon: Icons.copy_outlined,
-          onPressed: revealed ? onCopy : null,
+      ],
+    );
+  }
+}
+
+/// "Step 2 of 3" pill on the left, three progress bars on the right.
+class _StepTracker extends StatelessWidget {
+  const _StepTracker({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(42, 41, 46, 0.8),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(
+                  color: LexorPalette.accent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label.toUpperCase(),
+                style: const TextStyle(
+                  color: LexorPalette.accent,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.55,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        WarningCard(
-          title: l10n.recoveryPhraseScreenshotWarningTitle,
-          subtitle: l10n.recoveryPhraseScreenshotWarningBody,
+        Row(
+          children: [
+            for (var i = 0; i < 3; i++) ...[
+              if (i > 0) const SizedBox(width: 6),
+              Container(
+                width: 24,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: i < 2
+                      ? LexorPalette.accent
+                      : const Color(0xFF353439),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ],
+          ],
         ),
       ],
+    );
+  }
+}
+
+class _PillAction extends StatelessWidget {
+  const _PillAction({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.accentIcon = false,
+    this.expanded = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+  final bool accentIcon;
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final small = accentIcon;
+    return Material(
+      color: const Color.fromRGBO(42, 41, 46, 0.9),
+      shape: const StadiumBorder(),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: small ? 12 : 16,
+            vertical: small ? 6 : 15,
+          ),
+          child: Row(
+            mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: small ? 14 : 15,
+                color: accentIcon ? LexorPalette.accent : Colors.white,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  small ? label.toUpperCase() : label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: LexorPalette.textPrimary,
+                    fontSize: small ? 11 : 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: small ? 0.44 : 0.24,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WordTile extends StatelessWidget {
+  const _WordTile({
+    required this.index,
+    required this.word,
+    required this.hidden,
+  });
+
+  final int index;
+  final String word;
+  final bool hidden;
+
+  @override
+  Widget build(BuildContext context) {
+    // Hidden words are masked with dots rather than blurred, so the text
+    // is never in the tree (keeps it out of semantics and `find.text`).
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(14, 14, 18, 0.8),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Text(
+            index.toString().padLeft(2, '0'),
+            style: const TextStyle(
+              color: Color.fromRGBO(212, 238, 107, 0.8),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.44,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              hidden ? '•' * word.length.clamp(3, 8) : word,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              semanticsLabel: hidden ? 'hidden word' : null,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.16,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

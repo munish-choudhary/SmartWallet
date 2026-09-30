@@ -248,6 +248,49 @@ void main() {
     });
   });
 
+  group('active wallet', () {
+    test('defaults to the first wallet and lists every wallet', () async {
+      final vault = _buildVault();
+      final first = (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+      final second =
+          (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+
+      expect(await vault.walletIds(), [first, second]);
+      expect((await vault.activeWalletId()).valueOrNull, first);
+    });
+
+    test('setActiveWallet switches the active wallet', () async {
+      final vault = _buildVault();
+      await vault.createWallet(pin: Pin('123456'));
+      final second =
+          (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+
+      expect((await vault.setActiveWallet(second)).isOk, isTrue);
+      expect((await vault.activeWalletId()).valueOrNull, second);
+    });
+
+    test('setActiveWallet rejects an unknown wallet', () async {
+      final vault = _buildVault();
+      final first = (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+
+      final result = await vault.setActiveWallet('nope');
+      expect(result.failureOrNull, const AppFailure.walletNotFound());
+      expect((await vault.activeWalletId()).valueOrNull, first);
+    });
+
+    test('removing the active wallet falls back to a remaining one', () async {
+      final vault = _buildVault();
+      final first = (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+      final second =
+          (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+      await vault.setActiveWallet(second);
+
+      await vault.removeWallet(second, pin: Pin('123456'));
+
+      expect((await vault.activeWalletId()).valueOrNull, first);
+    });
+  });
+
   group('envelope salts', () {
     test('each wallet gets its own random salt', () async {
       final fixture = _buildVaultFixture();
@@ -277,6 +320,44 @@ void main() {
 
       final rightPin = await vault.revealSecret(walletId, pin: Pin('123456'));
       expect(rightPin.isOk, isTrue);
+    });
+  });
+
+  group('exportPrivateKey', () {
+    test('derives a key for a mnemonic wallet, PIN required', () async {
+      final vault = _buildVault();
+      final walletId = (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+
+      final wrong = await vault.exportPrivateKey(
+        walletId,
+        coin: wc.CoinType.ethereum,
+        pin: Pin('000000'),
+      );
+      expect(wrong.failureOrNull, const AppFailure.wrongPin());
+
+      final ok = await vault.exportPrivateKey(
+        walletId,
+        coin: wc.CoinType.ethereum,
+        pin: Pin('123456'),
+      );
+      expect(ok.valueOrNull, hasLength(32));
+    });
+
+    test('returns the stored key for an imported-key wallet', () async {
+      final vault = _buildVault();
+      final expected = List<int>.generate(32, (i) => i + 1);
+      final walletId = (await vault.importPrivateKey(
+        Uint8List.fromList(expected),
+        wc.CoinType.ethereum,
+        pin: Pin('123456'),
+      ))
+          .valueOrNull!;
+      final out = await vault.exportPrivateKey(
+        walletId,
+        coin: wc.CoinType.ethereum,
+        pin: Pin('123456'),
+      );
+      expect(out.valueOrNull, expected);
     });
   });
 }

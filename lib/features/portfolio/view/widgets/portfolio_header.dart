@@ -7,11 +7,13 @@ class PortfolioHeader extends StatelessWidget {
     super.key,
     this.networkName = 'MAINNET',
     this.onNotificationPressed,
+    this.unreadCount = 0,
     this.onProfilePressed,
   });
 
   final String networkName;
   final VoidCallback? onNotificationPressed;
+  final int unreadCount;
   final VoidCallback? onProfilePressed;
 
   @override
@@ -93,10 +95,17 @@ class PortfolioHeader extends StatelessWidget {
                 children: [
                   _circleButton(
                     onTap: onNotificationPressed,
-                    child: const Icon(
-                      Icons.notifications_none_rounded,
-                      size: 20,
-                      color: Color(0xFFC6C6C7),
+                    child: Badge(
+                      isLabelVisible: unreadCount > 0,
+                      label: Text(unreadCount > 9 ? '9+' : '$unreadCount'),
+                      backgroundColor: const Color(0xFFD4EE6B),
+                      textColor: const Color(0xFF181E00),
+                      child: const Icon(
+                        Icons.notifications_none_rounded,
+                        size: 22,
+                        color: Color(0xFFC6C6C7),
+                        semanticLabel: 'Notifications',
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),

@@ -9,10 +9,29 @@ import '../../../app/theme/app_typography.dart';
 import '../../../core/design_system/glass_card.dart';
 import '../../../core/design_system/onboarding_scaffold.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import 'pin_entry_navigation.dart';
 import '../view_model/onboarding_flow_cubit.dart';
 
-class SetupChoiceScreen extends StatelessWidget {
-  const SetupChoiceScreen({super.key});
+/// Create-vs-import choice. With [addMode] it is the entry of the
+/// add-another-wallet flow (reached from the Wallets screen) rather than
+/// first-run onboarding.
+class SetupChoiceScreen extends StatefulWidget {
+  const SetupChoiceScreen({super.key, this.addMode = false});
+
+  final bool addMode;
+
+  @override
+  State<SetupChoiceScreen> createState() => _SetupChoiceScreenState();
+}
+
+class _SetupChoiceScreenState extends State<SetupChoiceScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.addMode) {
+      context.read<OnboardingFlowCubit>().startAddingWallet();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +54,7 @@ class SetupChoiceScreen extends StatelessWidget {
             borderColor: AppColors.accent,
             onTap: () {
               context.read<OnboardingFlowCubit>().selectCreate();
-              context.push(Routes.createPin);
+              context.pushPinEntry();
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

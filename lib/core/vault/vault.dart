@@ -96,6 +96,19 @@ abstract interface class Vault {
   /// by routing to decide whether onboarding is reachable at all.
   Future<bool> hasAnyWallet();
 
+  /// The id of the wallet the app operates on: the one chosen with
+  /// [setActiveWallet], or the first stored one if none was chosen (or the
+  /// chosen one was removed). `walletNotFound` when no wallet exists.
+  Future<Result<WalletId>> activeWalletId();
+
+  /// Every stored wallet id, in creation order.
+  Future<List<WalletId>> walletIds();
+
+  /// Makes [id] the wallet [activeWalletId] returns. `walletNotFound` if
+  /// no such wallet is stored. Needs no PIN: it only selects, it reveals
+  /// and signs nothing.
+  Future<Result<void>> setActiveWallet(WalletId id);
+
   Future<Result<WalletId>> createWallet({required Pin pin, int words = 12});
   Future<Result<WalletId>> importMnemonic(String mnemonic, {required Pin pin});
   // CoinType is re-exported from wallet_core_ffi for now — it moves to a
@@ -144,6 +157,15 @@ abstract interface class Vault {
   Future<Result<List<Account>>> accounts(WalletId id);
   Future<Result<SignedPayload>> sign(SignRequest request);
   Future<Result<SecretReveal>> revealSecret(WalletId id, {required Pin pin});
+
+  /// Raw private key for [coin], for the export screen. Mnemonic wallets
+  /// derive it at the default path (in an isolate); imported-key wallets
+  /// return the stored key. PIN always required. Caller must zeroize.
+  Future<Result<Uint8List>> exportPrivateKey(
+    WalletId id, {
+    required CoinType coin,
+    required Pin pin,
+  });
   Future<Result<void>> changePin({required Pin current, required Pin next});
   Future<Result<void>> removeWallet(WalletId id, {required Pin pin});
 }

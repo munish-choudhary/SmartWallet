@@ -18,6 +18,10 @@ abstract interface class WalletCoreGateway {
   /// derived address. Throws [ArgumentError] on invalid input.
   String addressForImportedKey(Uint8List keyBytes, wc.CoinType coin);
 
+  /// Raw private key for [coin] at Wallet Core's default derivation path.
+  /// Caller must zeroize the returned bytes.
+  Uint8List privateKeyForCoin(String mnemonic, wc.CoinType coin);
+
   Uint8List sign({
     required String mnemonic,
     required wc.CoinType coin,
@@ -48,6 +52,10 @@ final class WalletCoreFfiGateway implements WalletCoreGateway {
   @override
   String addressForImportedKey(Uint8List keyBytes, wc.CoinType coin) =>
       wc.PrivateKey.fromBytes(keyBytes, coin).publicKeyForCoin(coin).addressForCoin(coin);
+
+  @override
+  Uint8List privateKeyForCoin(String mnemonic, wc.CoinType coin) =>
+      wc.HDWallet.createWithMnemonic(mnemonic).getKeyForCoin(coin).data;
 
   @override
   Uint8List sign({

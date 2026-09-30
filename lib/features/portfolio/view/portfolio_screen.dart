@@ -9,16 +9,16 @@ import 'receive_token_screen.dart';
 import 'swap_screen.dart';
 import 'token_detail_screen.dart';
 import 'transaction_pending_screen.dart';
-import 'widgets/ai_swap_insights_sheet.dart';
 import 'widgets/lexor_ai_floating_button.dart';
-import 'widgets/manage_token_list_card.dart';
 import 'widgets/portfolio_ambient_background.dart';
 import 'widgets/portfolio_balance_card.dart';
 import 'widgets/portfolio_bottom_nav_bar.dart';
 import 'widgets/portfolio_filter_bar.dart';
 import 'widgets/portfolio_header.dart';
 import 'widgets/token_asset_card.dart';
-import '../../walletconnect/view/wallet_connect_screen.dart';
+import 'package:go_router/go_router.dart';
+import '../../notifications/view_model/notifications_cubit.dart';
+import '../../../app/routes.dart';
 
 class PortfolioScreen extends StatefulWidget {
   const PortfolioScreen({super.key});
@@ -126,13 +126,24 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-  void _openWalletConnect() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const WalletConnectScreen(),
-      ),
-    );
-  }
+  // Go through go_router: these routes provide their own Cubits, which a
+  // plain Navigator push would not.
+  void _openDapps() => context.push(Routes.dapps);
+
+  void _openNotifications() => context.push(Routes.notifications);
+
+  void _openPriceAlerts() => context.push(Routes.priceAlerts);
+
+  void _openBuySell() => context.push(Routes.buySell);
+
+  void _openManageTokens() => context.push(Routes.manageTokens);
+
+  void _openSecuritySettings() => context.push(Routes.securitySettings);
+
+  // No network list exists yet, so the selector goes straight to adding one.
+  void _openAddCustomNetwork() => context.push(Routes.addCustomNetwork);
+
+  void _openWallets() => context.push(Routes.wallets);
 
   void _showQuickActionMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -143,18 +154,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-  void _openAiAssistant() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => AiSwapInsightsSheet(
-        onApplyOptimalRoute: () {
-          _openSwap();
-        },
-      ),
-    );
-  }
+  void _openAiAssistant() => context.push(Routes.aiAssistant);
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +227,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                 onSendPressed: () => _openSend(),
                                 onReceivePressed: () => _openReceive(),
                                 onSwapPressed: () => _openSwap(),
-                                onBuyPressed: () => _showQuickActionMessage('Fiat on-ramp opened'),
+                                onBuyPressed: _openBuySell,
                                 onSearchPressed: () {
                                   setState(() {
                                     _isSearchActive = !_isSearchActive;
@@ -237,8 +237,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                     }
                                   });
                                 },
-                                onAlertsPressed: () => _showQuickActionMessage('Price alerts active'),
-                                onNetworkSelectorPressed: () => _showQuickActionMessage('Network: All Networks active'),
+                                onAlertsPressed: _openPriceAlerts,
+                                onNetworkSelectorPressed: _openAddCustomNetwork,
                               ),
                               const SizedBox(height: 16),
 
@@ -307,7 +307,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                 onFilterChanged: (filter) {
                                   context.read<PortfolioCubit>().setFilter(filter);
                                 },
-                                onTunePressed: () => _showQuickActionMessage('Asset filter settings'),
+                                onTunePressed: _openManageTokens,
                               ),
                               const SizedBox(height: 12),
 
@@ -335,13 +335,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                     ),
                                   );
                                 }),
-
-                              const SizedBox(height: 4),
-
-                              // Manage Token List Card
-                              ManageTokenListCard(
-                                onTap: () => _showQuickActionMessage('Manage Token List modal'),
-                              ),
                             ],
                           ),
                         ),
@@ -354,8 +347,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         right: 0,
                         child: PortfolioHeader(
                           networkName: data.activeNetwork,
-                          onNotificationPressed: _openWalletConnect,
-                          onProfilePressed: () => _showQuickActionMessage('Profile: 0x48...1b9'),
+                          unreadCount: context.select<NotificationsCubit, int>(
+                            (c) => c.state.unreadCount,
+                          ),
+                          onNotificationPressed: _openNotifications,
+                          onProfilePressed: _openWallets,
                         ),
                       ),
 
@@ -385,7 +381,9 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                               } else if (tab == PortfolioNavTab.activity) {
                                 _openActivityHistory();
                               } else if (tab == PortfolioNavTab.browser) {
-                                _openWalletConnect();
+                                _openDapps();
+                              } else if (tab == PortfolioNavTab.settings) {
+                                _openSecuritySettings();
                               } else if (tab != PortfolioNavTab.portfolio) {
                                 _showQuickActionMessage('${tab.name.toUpperCase()} tab');
                               }

@@ -1,14 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/result/result.dart';
 import '../../../core/vault/pin_controller.dart';
+import '../../../core/vault/vault.dart';
 import '../data/onboarding_pin_holder.dart';
 
 part 'pin_setup_cubit.freezed.dart';
 
-enum PinStep { create, confirm }
+/// [verify] is the add-wallet step: the vault already has a PIN, so the
+/// user proves it instead of creating a new one.
+enum PinStep { create, confirm, verify }
 
-enum PinSetupError { trivialPin, mismatch }
+enum PinSetupError { trivialPin, mismatch, wrongPin, lockedOut }
 
 @freezed
 sealed class PinSetupState with _$PinSetupState {
@@ -20,6 +24,9 @@ sealed class PinSetupState with _$PinSetupState {
     @Default(0) int mismatchCount,
     @Default(false) bool completed,
     @Default(false) bool tooManyMismatches,
+
+    /// A verify-step unlock attempt is in flight; keypad input is ignored.
+    @Default(false) bool verifying,
   }) = _PinSetupState;
 }
 
@@ -28,18 +35,25 @@ sealed class PinSetupState with _$PinSetupState {
 /// (what the View/tests observe) carries just the digit count and UI
 /// flags, per CLAUDE.md's Memory Hygiene rules.
 class PinSetupCubit extends Cubit<PinSetupState> {
-  PinSetupCubit({required this.step, required this.pinHolder})
-    : _controller = PinController(),
+  PinSetupCubit({required this.step, required this.pinHolder, this.vault})
+    : assert(
+        step != PinStep.verify || vault != null,
+        'the verify step needs a vault',
+      ),
+      _controller = PinController(),
       super(const PinSetupState());
 
   final PinStep step;
   final OnboardingPinHolder pinHolder;
+
+  /// Only used by [PinStep.verify].
+  final Vault? vault;
   PinController _controller;
 
   static const maxMismatches = 3;
 
   void addDigit(String digit) {
-    if (state.digitCount >= state.maxLength) return;
+    if (state.verifying || state.digitCount >= state.maxLength) return;
     _controller.addDigit(digit);
     emit(
       state.copyWith(digitCount: _controller.length, error: null, shake: false),
@@ -48,7 +62,7 @@ class PinSetupCubit extends Cubit<PinSetupState> {
   }
 
   void removeDigit() {
-    if (_controller.length == 0) return;
+    if (state.verifying || _controller.length == 0) return;
     _controller.removeLast();
     emit(state.copyWith(digitCount: _controller.length, error: null));
   }
@@ -59,7 +73,42 @@ class PinSetupCubit extends Cubit<PinSetupState> {
         _handleCreateComplete();
       case PinStep.confirm:
         _handleConfirmComplete();
+      case PinStep.verify:
+        _handleVerifyComplete();
     }
+  }
+
+  /// Checks the entered PIN against the vault (which also applies its
+  /// lockout/backoff policy). On success the PIN buffer moves to the holder
+  /// so the later create/import step can use it; nothing else keeps it.
+  Future<void> _handleVerifyComplete() async {
+    emit(state.copyWith(verifying: true));
+    final pin = _controller.toPin();
+    final Result<void> result;
+    try {
+      result = await vault!.unlock(pin);
+    } finally {
+      pin.dispose();
+    }
+    if (isClosed) return;
+
+    if (result.isOk) {
+      pinHolder.storeVerifiedPin(_controller);
+      _controller = PinController();
+      emit(state.copyWith(verifying: false, completed: true));
+      return;
+    }
+    _controller.clear();
+    emit(
+      state.copyWith(
+        verifying: false,
+        digitCount: 0,
+        error: result.failureOrNull is VaultLockedOutFailure
+            ? PinSetupError.lockedOut
+            : PinSetupError.wrongPin,
+        shake: true,
+      ),
+    );
   }
 
   void _handleCreateComplete() {

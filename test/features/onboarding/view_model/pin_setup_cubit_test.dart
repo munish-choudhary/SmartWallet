@@ -1,5 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_wallet/core/vault/fake_vault.dart';
+import 'package:smart_wallet/core/vault/pin.dart';
+import 'package:smart_wallet/features/onboarding/data/bip39_wordlist.dart';
 import 'package:smart_wallet/features/onboarding/data/onboarding_pin_holder.dart';
 import 'package:smart_wallet/features/onboarding/view_model/pin_setup_cubit.dart';
 
@@ -143,5 +146,68 @@ void main() {
         expect(cubit.state.tooManyMismatches, isTrue);
       },
     );
+  });
+
+  group('PinSetupCubit (verify step)', () {
+    late OnboardingPinHolder holder;
+    late FakeVault vault;
+
+    setUp(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      holder = OnboardingPinHolder();
+      vault = FakeVault(wordlist: await Bip39Wordlist.load());
+      await vault.createWallet(pin: Pin('481592'));
+    });
+
+    Future<void> enter(PinSetupCubit cubit, List<String> digits) async {
+      digits.forEach(cubit.addDigit);
+      // The vault check is async; let it settle.
+      await Future<void>.delayed(const Duration(seconds: 1));
+    }
+
+    test('the existing PIN completes the step and is handed to the holder',
+        () async {
+      final cubit = PinSetupCubit(
+        step: PinStep.verify,
+        pinHolder: holder,
+        vault: vault,
+      );
+      await enter(cubit, ['4', '8', '1', '5', '9', '2']);
+
+      expect(cubit.state.completed, isTrue);
+      expect(cubit.state.verifying, isFalse);
+      expect(holder.hasConfirmedPin, isTrue);
+      await cubit.close();
+    });
+
+    test('a wrong PIN shakes, clears the buffer and stores nothing', () async {
+      final cubit = PinSetupCubit(
+        step: PinStep.verify,
+        pinHolder: holder,
+        vault: vault,
+      );
+      await enter(cubit, ['1', '1', '1', '1', '1', '1']);
+
+      expect(cubit.state.completed, isFalse);
+      expect(cubit.state.error, PinSetupError.wrongPin);
+      expect(cubit.state.shake, isTrue);
+      expect(cubit.state.digitCount, 0);
+      expect(holder.hasConfirmedPin, isFalse);
+      await cubit.close();
+    });
+
+    test('ignores keypad input while the check is running', () async {
+      final cubit = PinSetupCubit(
+        step: PinStep.verify,
+        pinHolder: holder,
+        vault: vault,
+      );
+      ['4', '8', '1', '5', '9', '2'].forEach(cubit.addDigit);
+      expect(cubit.state.verifying, isTrue);
+      cubit.addDigit('7');
+      expect(cubit.state.digitCount, 6);
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await cubit.close();
+    });
   });
 }

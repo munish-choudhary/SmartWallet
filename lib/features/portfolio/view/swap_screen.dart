@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../data/models/token_asset.dart';
-import 'widgets/ai_swap_insights_sheet.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../app/routes.dart';
 import 'widgets/portfolio_ambient_background.dart';
 import 'widgets/slippage_settings_sheet.dart';
 import 'widgets/token_selector_sheet.dart';
@@ -32,8 +34,8 @@ class _SwapScreenState extends State<SwapScreen> {
 
   double _slippage = 0.5;
   bool _mevProtection = true;
-  String _networkFee = '~\$4.20 (0.0012 ETH)';
-  String _route = 'Uniswap v3 (Direct)';
+  final String _networkFee = '~\$4.20 (0.0012 ETH)';
+  final String _route = 'Uniswap v3 (Direct)';
 
   @override
   void initState() {
@@ -122,27 +124,7 @@ class _SwapScreenState extends State<SwapScreen> {
     );
   }
 
-  void _showAiAssistant() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => AiSwapInsightsSheet(
-        onApplyOptimalRoute: () {
-          setState(() {
-            _route = 'Uniswap v3 + Curve Split';
-            _networkFee = '~\$3.10 (0.0009 ETH)';
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Applied AI Optimal Split Route (Saved \$48.20)'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  void _showAiAssistant() => context.push(Routes.aiAssistant);
 
   @override
   Widget build(BuildContext context) {

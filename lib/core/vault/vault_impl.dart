@@ -94,6 +94,26 @@ final class VaultImpl implements Vault {
   Future<bool> hasAnyWallet() async =>
       (await _envelopeStore.listWalletIds()).isNotEmpty;
 
+  @override
+  Future<Result<WalletId>> activeWalletId() async {
+    final ids = await _envelopeStore.listWalletIds();
+    if (ids.isEmpty) return const Result.err(AppFailure.walletNotFound());
+    final chosen = await _envelopeStore.readActiveWalletId();
+    return Result.ok(chosen != null && ids.contains(chosen) ? chosen : ids.first);
+  }
+
+  @override
+  Future<List<WalletId>> walletIds() => _envelopeStore.listWalletIds();
+
+  @override
+  Future<Result<void>> setActiveWallet(WalletId id) async {
+    if (!(await _envelopeStore.listWalletIds()).contains(id)) {
+      return const Result.err(AppFailure.walletNotFound());
+    }
+    await _envelopeStore.writeActiveWalletId(id);
+    return const Result.ok(null);
+  }
+
   // ---- pending-wallet flow ----
   // Not implemented yet — VaultImpl already has every piece this needs
   // (kdf/cipher/keystore/envelopeStore), but wiring it up for real is a
@@ -607,6 +627,26 @@ final class VaultImpl implements Vault {
   }
 
   @override
+  Future<Result<Uint8List>> exportPrivateKey(
+    WalletId id, {
+    required wc.CoinType coin,
+    required Pin pin,
+  }) async {
+    final revealed = await revealSecret(id, pin: pin);
+    final reveal = revealed.valueOrNull;
+    if (reveal == null) return Result.err(revealed.failureOrNull!);
+    if (reveal.type == SecretType.privateKey) return Result.ok(reveal.secret);
+    try {
+      final key = await _isolateRunner(
+        () => _walletCore.privateKeyForCoin(utf8.decode(reveal.secret), coin),
+      );
+      return Result.ok(key);
+    } finally {
+      zeroize(reveal.secret);
+    }
+  }
+
+  @override
   Future<Result<void>> removeWallet(WalletId id, {required Pin pin}) async {
     final kek = await _decryptEnvelopeKek(id, pin);
     if (kek == null) return const Result.err(AppFailure.wrongPin());
@@ -615,6 +655,9 @@ final class VaultImpl implements Vault {
     await _envelopeStore.delete(id);
     await _envelopeStore.removeWalletId(id);
     await _envelopeStore.deleteMeta(id);
+    if (await _envelopeStore.readActiveWalletId() == id) {
+      await _envelopeStore.deleteActiveWalletId();
+    }
     await _keystore.deleteKey(keyAlias: _walletKeyAlias(id));
     _session.forgetWallet(id);
     return const Result.ok(null);

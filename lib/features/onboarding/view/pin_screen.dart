@@ -11,6 +11,7 @@ import '../../../core/design_system/onboarding_scaffold.dart';
 import '../../../core/design_system/pin_dots.dart';
 import '../../../core/security/screen_protection_mixin.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import '../../../core/vault/vault.dart';
 import '../data/onboarding_pin_holder.dart';
 import '../view_model/pin_setup_cubit.dart';
 
@@ -36,6 +37,7 @@ class PinScreen extends StatelessWidget {
       create: (context) => PinSetupCubit(
         step: step,
         pinHolder: context.read<OnboardingPinHolder>(),
+        vault: step == PinStep.verify ? context.read<Vault>() : null,
       ),
       child: _PinScreenView(
         step: step,
@@ -91,15 +93,16 @@ class _PinScreenViewState extends State<_PinScreenView>
         }
       },
       builder: (context, state) {
-        final title = widget.step == PinStep.create
-            ? l10n.pinCreateTitle
-            : l10n.pinConfirmTitle;
-        final subtitle = widget.step == PinStep.create
-            ? l10n.pinCreateSubtitle
-            : l10n.pinConfirmSubtitle;
+        final (title, subtitle) = switch (widget.step) {
+          PinStep.create => (l10n.pinCreateTitle, l10n.pinCreateSubtitle),
+          PinStep.confirm => (l10n.pinConfirmTitle, l10n.pinConfirmSubtitle),
+          PinStep.verify => (l10n.pinVerifyTitle, l10n.pinVerifySubtitle),
+        };
         final errorText = switch (state.error) {
           PinSetupError.trivialPin => l10n.pinTrivialError,
           PinSetupError.mismatch => l10n.pinMismatchError,
+          PinSetupError.wrongPin => l10n.pinWrongError,
+          PinSetupError.lockedOut => l10n.pinLockedOutError,
           null => null,
         };
 

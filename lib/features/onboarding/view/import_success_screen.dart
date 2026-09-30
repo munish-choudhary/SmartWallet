@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../app/routes.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/design_system/onboarding_scaffold.dart';
 import '../../../core/design_system/pill_button.dart';
 import '../../../l10n/gen/app_localizations.dart';
-import '../view_model/onboarding_flow_cubit.dart';
+import 'finish_onboarding.dart';
 import 'success_check_badge.dart';
 
 class ImportSuccessScreen extends StatelessWidget {
@@ -40,10 +37,7 @@ class ImportSuccessScreen extends StatelessWidget {
       footer: PillButton(
         label: l10n.creationSuccessGoToWallet,
         icon: Icons.arrow_forward,
-        onPressed: () {
-          context.read<OnboardingFlowCubit>().reset();
-          context.go(Routes.portfolio);
-        },
+        onPressed: () => finishOnboarding(context),
       ),
     );
   }

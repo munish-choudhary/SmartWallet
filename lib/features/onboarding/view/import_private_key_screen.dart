@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/routes.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_typography.dart';
@@ -16,6 +15,7 @@ import '../../../core/vault/base58.dart';
 import '../../../core/vault/vault.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../data/onboarding_import_holder.dart';
+import 'pin_entry_navigation.dart';
 import '../view_model/import_private_key_cubit.dart';
 
 Map<CoinType, String> _networkLabels(AppLocalizations l10n) => {
@@ -70,7 +70,7 @@ class _ImportPrivateKeyViewState extends State<_ImportPrivateKeyView>
       bytes,
       state.network,
     );
-    context.push(Routes.createPin);
+    context.pushPinEntry();
   }
 
   @override

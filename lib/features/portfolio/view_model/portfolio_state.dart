@@ -31,6 +31,7 @@ sealed class PortfolioState with _$PortfolioState {
         :final searchQuery,
       ) =>
         data.assets.where((asset) {
+          if (asset.isHidden) return false;
           final matchesCategory = switch (activeFilter) {
             PortfolioFilter.all => true,
             PortfolioFilter.tokens => asset.network != 'BTC',

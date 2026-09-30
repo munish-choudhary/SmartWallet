@@ -100,6 +100,9 @@ final class PrivateKey {
 
   PublicKey publicKeyForCoin(CoinType coin) =>
       _notReady('PrivateKey.publicKeyForCoin');
+
+  /// Raw key bytes (`TWPrivateKeyData`). Caller must zeroize the result.
+  Uint8List get data => _notReady('PrivateKey.data');
 }
 
 /// Wraps `TWPublicKey`.

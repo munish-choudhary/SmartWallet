@@ -160,31 +160,9 @@ class PortfolioBalanceCard extends StatelessWidget {
                             onTap: onSearchPressed,
                           ),
                           const SizedBox(width: 6),
-                          Stack(
-                            children: [
-                              _circleAction(
-                                icon: Icons.notifications_none_rounded,
-                                onTap: onAlertsPressed,
-                              ),
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFD4EE6B),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0xFFD4EE6B),
-                                        blurRadius: 6,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _circleAction(
+                            icon: Icons.add_alert_rounded,
+                            onTap: onAlertsPressed,
                           ),
                         ],
                       ),
@@ -283,7 +261,7 @@ class PortfolioBalanceCard extends StatelessWidget {
                       ),
                       _actionButton(
                         label: 'Buy',
-                        icon: Icons.add_rounded,
+                        icon: Icons.credit_card_rounded,
                         onTap: onBuyPressed,
                         isDominant: true,
                       ),

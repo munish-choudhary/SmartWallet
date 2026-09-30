@@ -36,6 +36,14 @@ final class OnboardingPinHolder {
     return matches;
   }
 
+  /// Add-wallet flow: takes ownership of [controller] as the confirmed PIN
+  /// directly, because the vault already accepted it as the existing PIN
+  /// (there is no create/confirm pair to compare).
+  void storeVerifiedPin(PinController controller) {
+    _confirmed?.dispose();
+    _confirmed = controller;
+  }
+
   bool get hasConfirmedPin => _confirmed != null;
 
   /// Consumes the confirmed PIN, building a [Pin] from it. Can only be

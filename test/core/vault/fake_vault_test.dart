@@ -14,6 +14,25 @@ Future<FakeVault> _buildVault() async {
 }
 
 void main() {
+  group('active wallet', () {
+    test('lists wallets and switches the active one', () async {
+      final vault = await _buildVault();
+      final first = (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+      final second =
+          (await vault.createWallet(pin: Pin('123456'))).valueOrNull!;
+
+      expect(await vault.walletIds(), [first, second]);
+      expect((await vault.activeWalletId()).valueOrNull, first);
+
+      expect((await vault.setActiveWallet(second)).isOk, isTrue);
+      expect((await vault.activeWalletId()).valueOrNull, second);
+      expect(
+        (await vault.setActiveWallet('nope')).failureOrNull,
+        const AppFailure.walletNotFound(),
+      );
+    });
+  });
+
   group('pending-wallet flow', () {
     test('start -> phrase -> challenge -> confirm succeeds with right answers', () async {
       final vault = await _buildVault();

@@ -18,6 +18,7 @@ sealed class AppFailure with _$AppFailure {
       VaultLockedOutFailure;
   const factory AppFailure.userRejected() = UserRejectedFailure;
   const factory AppFailure.chainError(String message) = ChainErrorFailure;
+  const factory AppFailure.duplicateNetwork() = DuplicateNetworkFailure;
   const factory AppFailure.biometricUnavailable() =
       BiometricUnavailableFailure;
   const factory AppFailure.biometricNotAllowedForAction() =
